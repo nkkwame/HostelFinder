@@ -1,6 +1,8 @@
 {
   "version": 2,
   "name": "ucc-hostelfinder",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "builds": [
     {
       "src": "package.json",
@@ -11,7 +13,10 @@
     },
     {
       "src": "backend/server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
@@ -20,11 +25,24 @@
       "dest": "/backend/server.js"
     },
     {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "dest": "/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/dist/$1"
+      "dest": "/index.html"
     }
   ],
   "env": {
     "NODE_ENV": "production"
+  },
+  "functions": {
+    "backend/server.js": {
+      "maxDuration": 30
+    }
   }
 }
