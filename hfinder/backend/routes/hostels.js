@@ -1,10 +1,116 @@
 const express = require('express');
 const router = express.Router();
 const Hostel = require('../models/Hostel');
+const sampleHostels = require('../data/sampleData');
+
+// Check if MongoDB is connected
+const isDBConnected = () => {
+    return require('mongoose').connection.readyState === 1;
+};
 
 // Get all hostels with optional filtering
 router.get('/', async (req, res) => {
     try {
+        // If database is not connected, use sample data
+        if (!isDBConnected()) {
+            console.log('Database not connected, using sample data');
+
+            const {
+                search,
+                minPrice,
+                maxPrice,
+                roomType,
+                hasKitchen,
+                hasWifi,
+                location,
+                sortBy = 'name',
+                sortOrder = 'asc',
+                page = 1,
+                limit = 10
+            } = req.query;
+
+            let filteredHostels = [...sampleHostels];
+
+            // Apply filters to sample data
+            if (search) {
+                const searchLower = search.toLowerCase();
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.name.toLowerCase().includes(searchLower) ||
+                    hostel.location.toLowerCase().includes(searchLower) ||
+                    hostel.description.toLowerCase().includes(searchLower)
+                );
+            }
+
+            if (minPrice) {
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.priceRange.min >= Number(minPrice)
+                );
+            }
+
+            if (maxPrice) {
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.priceRange.max <= Number(maxPrice)
+                );
+            }
+
+            if (roomType) {
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.roomTypes.some(room => room.type === roomType)
+                );
+            }
+
+            if (hasKitchen === 'true') {
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.amenities.hasKitchen === true
+                );
+            }
+
+            if (hasWifi === 'true') {
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.amenities.hasWifi === true
+                );
+            }
+
+            if (location) {
+                const locationLower = location.toLowerCase();
+                filteredHostels = filteredHostels.filter(hostel =>
+                    hostel.location.toLowerCase().includes(locationLower)
+                );
+            }
+
+            // Sort
+            filteredHostels.sort((a, b) => {
+                let aVal = a[sortBy];
+                let bVal = b[sortBy];
+
+                if (sortBy === 'priceRange.min') {
+                    aVal = a.priceRange.min;
+                    bVal = b.priceRange.min;
+                } else if (sortBy === 'rating.average') {
+                    aVal = a.rating.average;
+                    bVal = b.rating.average;
+                }
+
+                if (sortOrder === 'desc') {
+                    return bVal > aVal ? 1 : -1;
+                }
+                return aVal > bVal ? 1 : -1;
+            });
+
+            // Pagination
+            const skip = (Number(page) - 1) * Number(limit);
+            const paginatedHostels = filteredHostels.slice(skip, skip + Number(limit));
+            const total = filteredHostels.length;
+
+            return res.json({
+                hostels: paginatedHostels,
+                totalPages: Math.ceil(total / Number(limit)),
+                currentPage: Number(page),
+                total
+            });
+        }
+
+        // Original database logic
         const {
             search,
             minPrice,
@@ -51,9 +157,6 @@ router.get('/', async (req, res) => {
         if (location) {
             filter.location = { $regex: location, $options: 'i' };
         }
-
-        // Only show hostels with vacancy
-        filter.totalVacancy = { $gt: 0 };
 
         // Build sort object
         const sort = {};
@@ -143,6 +246,17 @@ router.delete('/:id', async (req, res) => {
 // Get featured hostels (verified with high ratings)
 router.get('/featured/list', async (req, res) => {
     try {
+        // If database is not connected, use sample data
+        if (!isDBConnected()) {
+            console.log('Database not connected, using sample featured hostels');
+            const featuredHostels = sampleHostels
+                .filter(hostel => hostel.isFeatured && hostel.rating.average >= 4)
+                .sort((a, b) => b.rating.average - a.rating.average)
+                .slice(0, 6);
+
+            return res.json(featuredHostels);
+        }
+
         const hostels = await Hostel.find({
             verified: true,
             totalVacancy: { $gt: 0 },
