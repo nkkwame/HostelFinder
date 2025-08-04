@@ -25,7 +25,7 @@
 1. Go to "Security" → "Database Access"
 2. Click "Add New Database User"
 3. Authentication Method: Password
-4. Username: `hostelfinder_admin`
+4. Username: `your_username` (choose a secure username)
 5. Password: Generate secure password (save this!)
 6. Database User Privileges: "Atlas admin"
 7. Click "Add User"
@@ -47,7 +47,7 @@
 
 Your connection string will look like:
 ```
-mongodb+srv://hostelfinder_admin:<password>@hostelfinder-cluster.xxxxx.mongodb.net/?retryWrites=true&w=majority
+mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/?retryWrites=true&w=majority
 ```
 
 ## 🔧 Next Steps

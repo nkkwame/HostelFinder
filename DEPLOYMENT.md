@@ -16,7 +16,7 @@
 ### 3. Database Access Setup
 1. Go to "Database Access" in left sidebar
 2. Add new database user:
-   - Username: `hostelfinder_admin`
+   - Username: `your_username` (choose a secure username)
    - Password: Generate strong password
    - Database User Privileges: "Read and write to any database"
 
@@ -33,7 +33,7 @@
 
 Your connection string will look like:
 ```
-mongodb+srv://hostelfinder_admin:<password>@hostelfinder-cluster.xxxxx.mongodb.net/hostel_finder?retryWrites=true&w=majority
+mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/hostel_finder?retryWrites=true&w=majority
 ```
 
 ## 🚀 Deployment Options
@@ -67,6 +67,6 @@ mongodb+srv://hostelfinder_admin:<password>@hostelfinder-cluster.xxxxx.mongodb.n
 ```env
 NODE_ENV=production
 PORT=5000
-MONGODB_URI=mongodb+srv://hostelfinder_admin:<password>@hostelfinder-cluster.xxxxx.mongodb.net/hostel_finder
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/hostel_finder
 FRONTEND_URL=https://your-domain.vercel.app
 ```

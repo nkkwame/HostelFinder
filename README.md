@@ -126,7 +126,7 @@ npm run seed             # Seed database
 ```env
 NODE_ENV=production
 PORT=5000
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/hostel_finder
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/hostel_finder
 ```
 
 **Build the application:**
