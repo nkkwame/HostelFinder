@@ -1,15 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { FavoriteIcon, FavoriteBorderIcon, HomeIcon, LocationOnIcon, PaymentsIcon, KitchenIcon, WifiIcon, SecurityIcon, CheckCircleIcon, CancelIcon, StarIcon, VerifiedIcon } from '@mui/icons-material';
 
 const HostelCard = ({ hostel }) => {
+  const { user, isAuthenticated, addToFavorites, removeFromFavorites } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  
   const hasVacancy = hostel.totalVacancy > 0;
   const minPrice = Math.min(...hostel.roomTypes.map(room => room.price));
+  const isFavorite = user?.favorites?.includes(hostel._id);
   
+  const handleFavoriteToggle = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      // Could redirect to login or show a message
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(hostel._id);
+      } else {
+        await addToFavorites(hostel._id);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       {/* Hostel Image Placeholder */}
-      <div className="h-48 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
-        <span className="material-icons text-primary-600 text-4xl">home</span>
+      <div className="h-48 bg-gradient-to-r from-indigo-100 to-indigo-200 flex items-center justify-center relative">
+        <HomeIcon className="text-indigo-600 text-4xl" />
+        
+        {/* Favorite Button */}
+        {isAuthenticated && (
+          <button
+            onClick={handleFavoriteToggle}
+            disabled={isLoading}
+            className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 disabled:opacity-50"
+          >
+            {isFavorite ? (
+              <FavoriteIcon className="h-5 w-5 text-red-500" />
+            ) : (
+              <FavoriteBorderIcon className="h-5 w-5 text-gray-600" />
+            )}
+          </button>
+        )}
       </div>
 
       <div className="p-4">
@@ -19,13 +63,13 @@ const HostelCard = ({ hostel }) => {
             {hostel.name}
           </h3>
           {hostel.verified && (
-            <span className="material-icons text-green-500 text-sm">verified</span>
+            <VerifiedIcon className="text-green-500 text-sm" />
           )}
         </div>
 
         {/* Location and Distance */}
         <div className="flex items-center text-gray-600 text-sm mb-2">
-          <span className="material-icons text-sm mr-1">location_on</span>
+          <LocationOnIcon className="text-sm mr-1" />
           <span>{hostel.location}</span>
           <span className="mx-2">•</span>
           <span>{hostel.distanceFromCampus}km from campus</span>
@@ -33,7 +77,7 @@ const HostelCard = ({ hostel }) => {
 
         {/* Price Range */}
         <div className="flex items-center text-gray-700 font-medium mb-3">
-          <span className="material-icons text-sm mr-1 text-green-600">payments</span>
+          <PaymentsIcon className="text-sm mr-1 text-green-600" />
           <span>GH₵{minPrice} - GH₵{hostel.priceRange.max} /semester</span>
         </div>
 
@@ -41,19 +85,19 @@ const HostelCard = ({ hostel }) => {
         <div className="flex flex-wrap gap-1 mb-3">
           {hostel.amenities.hasKitchen && (
             <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-              <span className="material-icons text-xs mr-1">kitchen</span>
+              <KitchenIcon className="text-xs mr-1" />
               Kitchen
             </span>
           )}
           {hostel.amenities.hasWifi && (
             <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
-              <span className="material-icons text-xs mr-1">wifi</span>
+              <WifiIcon className="text-xs mr-1" />
               WiFi
             </span>
           )}
           {hostel.amenities.hasSecurity && (
             <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-              <span className="material-icons text-xs mr-1">security</span>
+              <SecurityIcon className="text-xs mr-1" />
               Security
             </span>
           )}
@@ -62,9 +106,11 @@ const HostelCard = ({ hostel }) => {
         {/* Vacancy Status */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <span className={`material-icons text-sm mr-1 ${hasVacancy ? 'text-green-600' : 'text-red-600'}`}>
-              {hasVacancy ? 'check_circle' : 'cancel'}
-            </span>
+            {hasVacancy ? (
+              <CheckCircleIcon className="text-sm mr-1 text-green-600" />
+            ) : (
+              <CancelIcon className="text-sm mr-1 text-red-600" />
+            )}
             <span className={`text-sm font-medium ${hasVacancy ? 'text-green-600' : 'text-red-600'}`}>
               {hasVacancy ? `${hostel.totalVacancy} rooms available` : 'No vacancy'}
             </span>
@@ -73,7 +119,7 @@ const HostelCard = ({ hostel }) => {
           {/* Rating */}
           {hostel.rating.count > 0 && (
             <div className="flex items-center">
-              <span className="material-icons text-yellow-500 text-sm">star</span>
+              <StarIcon className="text-yellow-500 text-sm" />
               <span className="text-sm text-gray-600 ml-1">
                 {hostel.rating.average.toFixed(1)} ({hostel.rating.count})
               </span>
@@ -95,7 +141,7 @@ const HostelCard = ({ hostel }) => {
         {/* Action Button */}
         <Link
           to={`/hostel/${hostel._id}`}
-          className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition duration-200 text-center block"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200 text-center block"
         >
           View Details
         </Link>
