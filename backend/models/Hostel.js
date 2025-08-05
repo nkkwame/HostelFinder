@@ -14,6 +14,10 @@ const hostelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     distanceFromCampus: {
         type: Number, // in kilometers
         required: true

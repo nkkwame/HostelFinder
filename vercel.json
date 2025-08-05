@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "ucc-hostelfinder",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "builds": [
@@ -39,10 +38,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "backend/server.js": {
-      "maxDuration": 30
-    }
   }
 }

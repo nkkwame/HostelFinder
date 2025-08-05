@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Hostel = require('../models/Hostel');
+const User = require('../models/User');
 const sampleHostels = require('../data/sampleData');
+const { protect, authorize, checkHostelOwnership } = require('../middleware/auth');
 
 // Check if MongoDB is connected
 const isDBConnected = () => {
@@ -198,48 +200,102 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Create a new hostel (admin only - simplified for now)
-router.post('/', async (req, res) => {
+// Create a new hostel (authenticated users only)
+router.post('/', protect, async (req, res) => {
     try {
-        const hostel = new Hostel(req.body);
+        // Add owner to hostel data
+        const hostelData = {
+            ...req.body,
+            owner: req.user.id
+        };
+
+        const hostel = new Hostel(hostelData);
         await hostel.save();
-        res.status(201).json(hostel);
+
+        // Add hostel to user's owned hostels
+        await User.findByIdAndUpdate(
+            req.user.id,
+            { $push: { hostelsOwned: hostel._id } }
+        );
+
+        // Populate owner information
+        await hostel.populate('owner', 'name email phone');
+
+        res.status(201).json({
+            success: true,
+            message: 'Hostel created successfully',
+            hostel
+        });
     } catch (error) {
-        res.status(400).json({ message: 'Error creating hostel', error: error.message });
+        console.error('Create hostel error:', error);
+        res.status(400).json({ 
+            success: false,
+            message: 'Error creating hostel', 
+            error: error.message 
+        });
     }
 });
 
-// Update a hostel
-router.put('/:id', async (req, res) => {
+// Update a hostel (owner or admin only)
+router.put('/:id', protect, checkHostelOwnership, async (req, res) => {
     try {
         const hostel = await Hostel.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
-        );
+        ).populate('owner', 'name email phone');
 
         if (!hostel) {
-            return res.status(404).json({ message: 'Hostel not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Hostel not found' 
+            });
         }
 
-        res.json(hostel);
+        res.json({
+            success: true,
+            message: 'Hostel updated successfully',
+            hostel
+        });
     } catch (error) {
-        res.status(400).json({ message: 'Error updating hostel', error: error.message });
+        console.error('Update hostel error:', error);
+        res.status(400).json({ 
+            success: false,
+            message: 'Error updating hostel', 
+            error: error.message 
+        });
     }
 });
 
-// Delete a hostel
-router.delete('/:id', async (req, res) => {
+// Delete a hostel (owner or admin only)
+router.delete('/:id', protect, checkHostelOwnership, async (req, res) => {
     try {
         const hostel = await Hostel.findByIdAndDelete(req.params.id);
 
         if (!hostel) {
-            return res.status(404).json({ message: 'Hostel not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Hostel not found' 
+            });
         }
 
-        res.json({ message: 'Hostel deleted successfully' });
+        // Remove hostel from user's owned hostels
+        await User.findByIdAndUpdate(
+            hostel.owner,
+            { $pull: { hostelsOwned: hostel._id } }
+        );
+
+        res.json({ 
+            success: true,
+            message: 'Hostel deleted successfully' 
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Error deleting hostel', error: error.message });
+        console.error('Delete hostel error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error deleting hostel', 
+            error: error.message 
+        });
     }
 });
 
@@ -268,6 +324,28 @@ router.get('/featured/list', async (req, res) => {
         res.json(hostels);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching featured hostels', error: error.message });
+    }
+});
+
+// Get user's owned hostels
+router.get('/my-hostels', protect, async (req, res) => {
+    try {
+        const hostels = await Hostel.find({ owner: req.user.id })
+            .populate('owner', 'name email phone')
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            count: hostels.length,
+            hostels
+        });
+    } catch (error) {
+        console.error('Get user hostels error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error fetching your hostels', 
+            error: error.message 
+        });
     }
 });
 

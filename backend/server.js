@@ -8,6 +8,7 @@ const morgan = require('morgan');
 
 // Import routes
 const hostelRoutes = require('./routes/hostels');
+const authRoutes = require('./routes/auth');
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/hostels', hostelRoutes);
+app.use('/api/auth', authRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
