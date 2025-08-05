@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { HomeIcon, LocationOnIcon, PhoneIcon, EmailIcon, AttachMoneyIcon, WifiIcon, KitchenIcon, LocalParkingIcon, SecurityIcon, LocalLaundryServiceIcon, BookIcon } from '@mui/icons-material';
+import { Home as HomeIcon, LocationOn as LocationOnIcon, Phone as PhoneIcon, Email as EmailIcon, AttachMoney as AttachMoneyIcon, Wifi as WifiIcon, Kitchen as KitchenIcon, LocalParking as LocalParkingIcon, Security as SecurityIcon, LocalLaundryService as LocalLaundryServiceIcon, Book as BookIcon } from '@mui/icons-material';
 
 const AddHostelPage = () => {
   const { user, isAuthenticated } = useAuth();

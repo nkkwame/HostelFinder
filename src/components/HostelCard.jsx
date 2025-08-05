@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FavoriteIcon, FavoriteBorderIcon, HomeIcon, LocationOnIcon, PaymentsIcon, KitchenIcon, WifiIcon, SecurityIcon, CheckCircleIcon, CancelIcon, StarIcon, VerifiedIcon } from '@mui/icons-material';
+import { Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon, Home as HomeIcon, LocationOn as LocationOnIcon, Payments as PaymentsIcon, Kitchen as KitchenIcon, Wifi as WifiIcon, Security as SecurityIcon, CheckCircle as CheckCircleIcon, Cancel as CancelIcon, Star as StarIcon, Verified as VerifiedIcon } from '@mui/icons-material';
 
 const HostelCard = ({ hostel }) => {
   const { user, isAuthenticated, addToFavorites, removeFromFavorites } = useAuth();

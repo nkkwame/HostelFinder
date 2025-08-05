@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PersonIcon, DashboardIcon, HomeIcon, MenuIcon, CloseIcon, SearchIcon, LogoutIcon, LoginIcon, AddIcon } from '@mui/icons-material';
+import { Person as PersonIcon, Dashboard as DashboardIcon, Home as HomeIcon, Menu as MenuIcon, Close as CloseIcon, Search as SearchIcon, Logout as LogoutIcon, Login as LoginIcon, Add as AddIcon } from '@mui/icons-material';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

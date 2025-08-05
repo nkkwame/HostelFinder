@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PersonIcon, EmailIcon, LockIcon, PhoneIcon, VisibilityIcon, VisibilityOffIcon } from '@mui/icons-material';
+import { Person as PersonIcon, Email as EmailIcon, Lock as LockIcon, Phone as PhoneIcon, Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
