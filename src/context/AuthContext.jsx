@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.get('/auth/me');
       dispatch({
         type: 'USER_LOADED',
-        payload: response.data.user
+        payload: response.user
       });
     } catch (error) {
       console.error('Load user error:', error);
@@ -109,10 +109,10 @@ export const AuthProvider = ({ children }) => {
       
       dispatch({
         type: 'REGISTER_SUCCESS',
-        payload: response.data
+        payload: response
       });
       
-      return { success: true, data: response.data };
+      return { success: true, data: response };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Registration failed';
       dispatch({
@@ -130,10 +130,10 @@ export const AuthProvider = ({ children }) => {
       
       dispatch({
         type: 'LOGIN_SUCCESS',
-        payload: response.data
+        payload: response
       });
       
-      return { success: true, data: response.data };
+      return { success: true, data: response };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Login failed';
       dispatch({

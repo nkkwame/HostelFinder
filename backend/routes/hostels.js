@@ -115,7 +115,6 @@ router.get('/', async (req, res) => {
         // Original database logic
         const {
             search,
-            university,
             minPrice,
             maxPrice,
             roomType,
@@ -137,10 +136,6 @@ router.get('/', async (req, res) => {
                 { location: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } }
             ];
-        }
-
-        if (university) {
-            filter.university = university;
         }
 
         if (minPrice || maxPrice) {
@@ -173,7 +168,6 @@ router.get('/', async (req, res) => {
         const skip = (Number(page) - 1) * Number(limit);
 
         const hostels = await Hostel.find(filter)
-            .populate('university', 'name shortName location')
             .sort(sort)
             .skip(skip)
             .limit(Number(limit));
@@ -194,9 +188,7 @@ router.get('/', async (req, res) => {
 // Get a single hostel by ID
 router.get('/:id', async (req, res) => {
     try {
-        const hostel = await Hostel.findById(req.params.id)
-            .populate('university', 'name shortName location')
-            .populate('owner', 'name email');
+        const hostel = await Hostel.findById(req.params.id);
 
         if (!hostel) {
             return res.status(404).json({ message: 'Hostel not found' });

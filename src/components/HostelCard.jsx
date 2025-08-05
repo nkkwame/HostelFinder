@@ -35,22 +35,22 @@ const HostelCard = ({ hostel }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-xl transition-shadow duration-300 overflow-hidden border dark:border-gray-700">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       {/* Hostel Image Placeholder */}
-      <div className="h-48 bg-gradient-to-r from-indigo-100 to-indigo-200 dark:from-indigo-900 dark:to-indigo-800 flex items-center justify-center relative">
-        <HomeIcon className="text-indigo-600 dark:text-indigo-400 text-4xl" />
+      <div className="h-48 bg-gradient-to-r from-indigo-100 to-indigo-200 flex items-center justify-center relative">
+        <HomeIcon className="text-indigo-600 text-4xl" />
         
         {/* Favorite Button */}
         {isAuthenticated && (
           <button
             onClick={handleFavoriteToggle}
             disabled={isLoading}
-            className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50"
+            className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 disabled:opacity-50"
           >
             {isFavorite ? (
               <FavoriteIcon className="h-5 w-5 text-red-500" />
             ) : (
-              <FavoriteBorderIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <FavoriteBorderIcon className="h-5 w-5 text-gray-600" />
             )}
           </button>
         )}
@@ -59,7 +59,7 @@ const HostelCard = ({ hostel }) => {
       <div className="p-4">
         {/* Header */}
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
+          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
             {hostel.name}
           </h3>
           {hostel.verified && (
@@ -68,7 +68,7 @@ const HostelCard = ({ hostel }) => {
         </div>
 
         {/* Location and Distance */}
-        <div className="flex items-center text-gray-600 dark:text-gray-300 text-sm mb-2">
+        <div className="flex items-center text-gray-600 text-sm mb-2">
           <LocationOnIcon className="text-sm mr-1" />
           <span>{hostel.location}</span>
           <span className="mx-2">•</span>
@@ -76,7 +76,7 @@ const HostelCard = ({ hostel }) => {
         </div>
 
         {/* Price Range */}
-        <div className="flex items-center text-gray-700 dark:text-gray-300 font-medium mb-3">
+        <div className="flex items-center text-gray-700 font-medium mb-3">
           <PaymentsIcon className="text-sm mr-1 text-green-600" />
           <span>GH₵{minPrice} - GH₵{hostel.priceRange.max} /semester</span>
         </div>
@@ -84,19 +84,19 @@ const HostelCard = ({ hostel }) => {
         {/* Amenities */}
         <div className="flex flex-wrap gap-1 mb-3">
           {hostel.amenities.hasKitchen && (
-            <span className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+            <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
               <KitchenIcon className="text-xs mr-1" />
               Kitchen
             </span>
           )}
           {hostel.amenities.hasWifi && (
-            <span className="inline-flex items-center px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full">
+            <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
               <WifiIcon className="text-xs mr-1" />
               WiFi
             </span>
           )}
           {hostel.amenities.hasSecurity && (
-            <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
+            <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
               <SecurityIcon className="text-xs mr-1" />
               Security
             </span>
@@ -120,7 +120,7 @@ const HostelCard = ({ hostel }) => {
           {hostel.rating.count > 0 && (
             <div className="flex items-center">
               <StarIcon className="text-yellow-500 text-sm" />
-              <span className="text-sm text-gray-600 dark:text-gray-300 ml-1">
+              <span className="text-sm text-gray-600 ml-1">
                 {hostel.rating.average.toFixed(1)} ({hostel.rating.count})
               </span>
             </div>
@@ -128,10 +128,10 @@ const HostelCard = ({ hostel }) => {
         </div>
 
         {/* Room Types Preview */}
-        <div className="text-xs text-gray-600 dark:text-gray-300 mb-4">
+        <div className="text-xs text-gray-600 mb-4">
           <div className="flex flex-wrap gap-1">
             {hostel.roomTypes.map((room, index) => (
-              <span key={index} className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
+              <span key={index} className="bg-gray-100 px-2 py-1 rounded">
                 {room.type}: GH₵{room.price}
               </span>
             ))}
@@ -141,7 +141,7 @@ const HostelCard = ({ hostel }) => {
         {/* Action Button */}
         <Link
           to={`/hostel/${hostel._id}`}
-          className="w-full bg-indigo-600 dark:bg-indigo-700 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition duration-200 text-center block"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200 text-center block"
         >
           View Details
         </Link>

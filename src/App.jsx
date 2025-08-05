@@ -7,7 +7,6 @@ import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import HostelDetailPage from './pages/HostelDetailPage';
-import UniversitiesPage from './pages/UniversitiesPage';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import AddHostelPage from './pages/AddHostelPage';
@@ -24,7 +23,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/search" element={<SearchPage />} />
-                <Route path="/universities" element={<UniversitiesPage />} />
                 <Route path="/hostel/:id" element={<HostelDetailPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route 

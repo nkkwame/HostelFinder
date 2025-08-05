@@ -54,9 +54,6 @@ const Header = () => {
             <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium">
               Home
             </Link>
-            <Link to="/universities" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium">
-              Universities
-            </Link>
             <Link to="/search" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium">
               Browse Hostels
             </Link>
