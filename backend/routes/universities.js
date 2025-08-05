@@ -7,22 +7,22 @@ const auth = require('../middleware/auth');
 router.get('/', async (req, res) => {
     try {
         const { active, region, type, search } = req.query;
-        
+
         // Build filter object
         const filter = {};
-        
+
         if (active !== undefined) {
             filter.isActive = active === 'true';
         }
-        
+
         if (region) {
             filter['location.region'] = new RegExp(region, 'i');
         }
-        
+
         if (type) {
             filter.type = type;
         }
-        
+
         if (search) {
             filter.$or = [
                 { name: new RegExp(search, 'i') },
@@ -30,11 +30,11 @@ router.get('/', async (req, res) => {
                 { 'location.city': new RegExp(search, 'i') }
             ];
         }
-        
+
         const universities = await University.find(filter)
             .sort({ name: 1 })
             .select('-__v');
-            
+
         res.json(universities);
     } catch (error) {
         console.error('Error fetching universities:', error);
@@ -46,11 +46,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const university = await University.findById(req.params.id).select('-__v');
-        
+
         if (!university) {
             return res.status(404).json({ message: 'University not found' });
         }
-        
+
         res.json(university);
     } catch (error) {
         console.error('Error fetching university:', error);
@@ -65,7 +65,7 @@ router.post('/', auth, async (req, res) => {
         if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admin role required.' });
         }
-        
+
         const {
             name,
             shortName,
@@ -76,7 +76,7 @@ router.post('/', auth, async (req, res) => {
             description,
             logo
         } = req.body;
-        
+
         // Check if university already exists
         const existingUniversity = await University.findOne({
             $or: [
@@ -84,13 +84,13 @@ router.post('/', auth, async (req, res) => {
                 { shortName: shortName }
             ]
         });
-        
+
         if (existingUniversity) {
-            return res.status(400).json({ 
-                message: 'University with this name or short name already exists' 
+            return res.status(400).json({
+                message: 'University with this name or short name already exists'
             });
         }
-        
+
         const university = new University({
             name,
             shortName,
@@ -101,7 +101,7 @@ router.post('/', auth, async (req, res) => {
             description,
             logo
         });
-        
+
         await university.save();
         res.status(201).json(university);
     } catch (error) {
@@ -117,17 +117,17 @@ router.put('/:id', auth, async (req, res) => {
         if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admin role required.' });
         }
-        
+
         const university = await University.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
         ).select('-__v');
-        
+
         if (!university) {
             return res.status(404).json({ message: 'University not found' });
         }
-        
+
         res.json(university);
     } catch (error) {
         console.error('Error updating university:', error);
@@ -142,13 +142,13 @@ router.delete('/:id', auth, async (req, res) => {
         if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admin role required.' });
         }
-        
+
         const university = await University.findByIdAndDelete(req.params.id);
-        
+
         if (!university) {
             return res.status(404).json({ message: 'University not found' });
         }
-        
+
         res.json({ message: 'University deleted successfully' });
     } catch (error) {
         console.error('Error deleting university:', error);
