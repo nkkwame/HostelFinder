@@ -9,6 +9,7 @@ const morgan = require('morgan');
 // Import routes
 const hostelRoutes = require('./routes/hostels');
 const authRoutes = require('./routes/auth');
+const universityRoutes = require('./routes/universities');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/hostels', hostelRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/universities', universityRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
@@ -35,12 +37,13 @@ app.get('/', (req, res) => {
 // MongoDB connection
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/hostel_finder');
+        const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hostel_finder';
+        await mongoose.connect(mongoURI);
         console.log('MongoDB connected successfully');
     } catch (error) {
         console.error('MongoDB connection error:', error);
         console.log('Server will continue without database connection');
-        console.log('Please start MongoDB or provide a valid MONGODB_URI');
+        console.log('Please provide a valid MONGODB_URI environment variable');
     }
 };
 

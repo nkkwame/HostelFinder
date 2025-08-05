@@ -86,9 +86,27 @@ const hostelSchema = new mongoose.Schema({
         }
     },
     images: [{
-        url: String,
+        url: {
+            type: String,
+            required: true
+        },
         caption: String
     }],
+    video: {
+        youtubeUrl: {
+            type: String,
+            validate: {
+                validator: function(v) {
+                    if (!v) return true; // Allow empty values
+                    // Validate YouTube URL format
+                    return /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[\w-]+/.test(v);
+                },
+                message: 'Please provide a valid YouTube URL'
+            }
+        },
+        title: String,
+        description: String
+    },
     rules: {
         noSmoking: Boolean,
         noPets: Boolean,

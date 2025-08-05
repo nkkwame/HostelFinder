@@ -8,6 +8,12 @@ const HostelDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const extractVideoId = (url) => {
+    if (!url) return '';
+    const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    return match ? match[1] : '';
+  };
+
   useEffect(() => {
     fetchHostelDetails();
   }, [id]);
@@ -146,13 +152,59 @@ const HostelDetailPage = () => {
             {/* Image Gallery */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Photos</h2>
-              <div className="bg-gradient-to-r from-primary-100 to-primary-200 rounded-lg h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <span className="material-icons text-primary-600 text-6xl mb-2">photo_camera</span>
-                  <p className="text-primary-700">Photos coming soon</p>
+              {hostel.images && hostel.images.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {hostel.images.map((image, index) => (
+                    image.url && (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={image.url} 
+                          alt={image.caption || `Hostel image ${index + 1}`}
+                          className="w-full h-48 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow duration-200"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                        {image.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 rounded-b-lg">
+                            <p className="text-sm">{image.caption}</p>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gradient-to-r from-primary-100 to-primary-200 rounded-lg h-64 flex items-center justify-center">
+                  <div className="text-center">
+                    <span className="material-icons text-primary-600 text-6xl mb-2">photo_camera</span>
+                    <p className="text-primary-700">No photos available</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Video Section */}
+            {hostel.video && hostel.video.youtubeUrl && (
+              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  {hostel.video.title || 'Hostel Video Tour'}
+                </h2>
+                {hostel.video.description && (
+                  <p className="text-gray-600 mb-4">{hostel.video.description}</p>
+                )}
+                <div className="aspect-w-16 aspect-h-9">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${extractVideoId(hostel.video.youtubeUrl)}`}
+                    title={hostel.video.title || 'Hostel Video Tour'}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-64 md:h-80 rounded-lg"
+                  ></iframe>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Description */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">

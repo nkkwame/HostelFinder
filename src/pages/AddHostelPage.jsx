@@ -39,7 +39,16 @@ const AddHostelPage = () => {
       quietHours: '',
       guestPolicy: ''
     },
-    images: []
+    images: [
+      { url: '', caption: '' },
+      { url: '', caption: '' },
+      { url: '', caption: '' }
+    ],
+    video: {
+      youtubeUrl: '',
+      title: '',
+      description: ''
+    }
   });
 
   const [loading, setLoading] = useState(false);
@@ -104,6 +113,39 @@ const AddHostelPage = () => {
         roomTypes: updatedRoomTypes
       }));
     }
+  };
+
+  const handleImageChange = (index, field, value) => {
+    const updatedImages = [...formData.images];
+    updatedImages[index] = {
+      ...updatedImages[index],
+      [field]: value
+    };
+    setFormData(prev => ({
+      ...prev,
+      images: updatedImages
+    }));
+  };
+
+  const handleVideoChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      video: {
+        ...prev.video,
+        [field]: value
+      }
+    }));
+  };
+
+  const extractVideoId = (url) => {
+    if (!url) return '';
+    const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    return match ? match[1] : '';
+  };
+
+  const getEmbedUrl = (youtubeUrl) => {
+    const videoId = extractVideoId(youtubeUrl);
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
   };
 
   const handleSubmit = async (e) => {
@@ -409,6 +451,127 @@ const AddHostelPage = () => {
                     placeholder="+233 XX XXX XXXX"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Images Section */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-gray-900">Hostel Images</h3>
+              <p className="text-sm text-gray-600">Add up to 3 images of your hostel</p>
+              
+              <div className="space-y-4">
+                {formData.images.map((image, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="text-md font-medium text-gray-800 mb-3">Image {index + 1}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor={`image-url-${index}`} className="block text-sm font-medium text-gray-700">
+                          Image URL *
+                        </label>
+                        <input
+                          type="url"
+                          id={`image-url-${index}`}
+                          value={image.url}
+                          onChange={(e) => handleImageChange(index, 'url', e.target.value)}
+                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={`image-caption-${index}`} className="block text-sm font-medium text-gray-700">
+                          Caption
+                        </label>
+                        <input
+                          type="text"
+                          id={`image-caption-${index}`}
+                          value={image.caption}
+                          onChange={(e) => handleImageChange(index, 'caption', e.target.value)}
+                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="Description of the image"
+                        />
+                      </div>
+                    </div>
+                    {image.url && (
+                      <div className="mt-3">
+                        <img 
+                          src={image.url} 
+                          alt={image.caption || `Hostel image ${index + 1}`}
+                          className="w-32 h-24 object-cover rounded border"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Video Section */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-gray-900">Hostel Video (Optional)</h3>
+              <p className="text-sm text-gray-600">Add a YouTube video to showcase your hostel</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="video-url" className="block text-sm font-medium text-gray-700">
+                    YouTube Video URL
+                  </label>
+                  <input
+                    type="url"
+                    id="video-url"
+                    value={formData.video.youtubeUrl}
+                    onChange={(e) => handleVideoChange('youtubeUrl', e.target.value)}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="video-title" className="block text-sm font-medium text-gray-700">
+                      Video Title
+                    </label>
+                    <input
+                      type="text"
+                      id="video-title"
+                      value={formData.video.title}
+                      onChange={(e) => handleVideoChange('title', e.target.value)}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Tour of our hostel"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="video-description" className="block text-sm font-medium text-gray-700">
+                      Video Description
+                    </label>
+                    <input
+                      type="text"
+                      id="video-description"
+                      value={formData.video.description}
+                      onChange={(e) => handleVideoChange('description', e.target.value)}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="A virtual tour of our facilities"
+                    />
+                  </div>
+                </div>
+
+                {formData.video.youtubeUrl && getEmbedUrl(formData.video.youtubeUrl) && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Video Preview:</p>
+                    <div className="aspect-w-16 aspect-h-9 max-w-md">
+                      <iframe
+                        src={getEmbedUrl(formData.video.youtubeUrl)}
+                        title="Video preview"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-48 rounded border"
+                      ></iframe>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
