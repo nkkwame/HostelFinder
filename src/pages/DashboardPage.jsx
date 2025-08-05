@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { HomeIcon, AddIcon, EditIcon, DeleteIcon, VisibilityIcon, FavoriteIcon, PersonIcon, LocationOnIcon, AttachMoneyIcon } from '@mui/icons-material';
+import { Home as HomeIcon, Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon, Favorite as FavoriteIcon, Person as PersonIcon, LocationOn as LocationOnIcon, AttachMoney as AttachMoneyIcon } from '@mui/icons-material';
 
 const DashboardPage = () => {
   const { user, isAuthenticated, logout } = useAuth();
