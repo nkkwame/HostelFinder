@@ -115,6 +115,7 @@ router.get('/', async (req, res) => {
         // Original database logic
         const {
             search,
+            university,
             minPrice,
             maxPrice,
             roomType,
@@ -136,6 +137,10 @@ router.get('/', async (req, res) => {
                 { location: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } }
             ];
+        }
+
+        if (university) {
+            filter.university = university;
         }
 
         if (minPrice || maxPrice) {
@@ -168,6 +173,7 @@ router.get('/', async (req, res) => {
         const skip = (Number(page) - 1) * Number(limit);
 
         const hostels = await Hostel.find(filter)
+            .populate('university', 'name shortName location')
             .sort(sort)
             .skip(skip)
             .limit(Number(limit));
@@ -188,7 +194,9 @@ router.get('/', async (req, res) => {
 // Get a single hostel by ID
 router.get('/:id', async (req, res) => {
     try {
-        const hostel = await Hostel.findById(req.params.id);
+        const hostel = await Hostel.findById(req.params.id)
+            .populate('university', 'name shortName location')
+            .populate('owner', 'name email');
 
         if (!hostel) {
             return res.status(404).json({ message: 'Hostel not found' });
@@ -228,10 +236,10 @@ router.post('/', protect, async (req, res) => {
         });
     } catch (error) {
         console.error('Create hostel error:', error);
-        res.status(400).json({ 
+        res.status(400).json({
             success: false,
-            message: 'Error creating hostel', 
-            error: error.message 
+            message: 'Error creating hostel',
+            error: error.message
         });
     }
 });
@@ -246,9 +254,9 @@ router.put('/:id', protect, checkHostelOwnership, async (req, res) => {
         ).populate('owner', 'name email phone');
 
         if (!hostel) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'Hostel not found' 
+                message: 'Hostel not found'
             });
         }
 
@@ -259,10 +267,10 @@ router.put('/:id', protect, checkHostelOwnership, async (req, res) => {
         });
     } catch (error) {
         console.error('Update hostel error:', error);
-        res.status(400).json({ 
+        res.status(400).json({
             success: false,
-            message: 'Error updating hostel', 
-            error: error.message 
+            message: 'Error updating hostel',
+            error: error.message
         });
     }
 });
@@ -273,9 +281,9 @@ router.delete('/:id', protect, checkHostelOwnership, async (req, res) => {
         const hostel = await Hostel.findByIdAndDelete(req.params.id);
 
         if (!hostel) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'Hostel not found' 
+                message: 'Hostel not found'
             });
         }
 
@@ -285,16 +293,16 @@ router.delete('/:id', protect, checkHostelOwnership, async (req, res) => {
             { $pull: { hostelsOwned: hostel._id } }
         );
 
-        res.json({ 
+        res.json({
             success: true,
-            message: 'Hostel deleted successfully' 
+            message: 'Hostel deleted successfully'
         });
     } catch (error) {
         console.error('Delete hostel error:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            message: 'Error deleting hostel', 
-            error: error.message 
+            message: 'Error deleting hostel',
+            error: error.message
         });
     }
 });
@@ -341,10 +349,10 @@ router.get('/my-hostels', protect, async (req, res) => {
         });
     } catch (error) {
         console.error('Get user hostels error:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            message: 'Error fetching your hostels', 
-            error: error.message 
+            message: 'Error fetching your hostels',
+            error: error.message
         });
     }
 });

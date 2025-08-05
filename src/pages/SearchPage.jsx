@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import HostelCard from '../components/HostelCard';
+import UniversitySelector from '../components/UniversitySelector';
 import { hostelService } from '../services/api';
 
 const SearchPage = () => {
@@ -14,6 +15,7 @@ const SearchPage = () => {
   // Filters state
   const [filters, setFilters] = useState({
     search: searchParams.get('q') || '',
+    university: searchParams.get('university') || '',
     minPrice: '',
     maxPrice: '',
     roomType: '',
@@ -68,6 +70,7 @@ const SearchPage = () => {
   const resetFilters = () => {
     setFilters({
       search: '',
+      university: '',
       minPrice: '',
       maxPrice: '',
       roomType: '',
@@ -87,15 +90,15 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {filters.search ? `Search Results for "${filters.search}"` : 'Browse Hostels'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             {total > 0 ? `${total} hostels found` : 'No hostels found'}
           </p>
         </div>
@@ -104,20 +107,31 @@ const SearchPage = () => {
           
           {/* Filters Sidebar */}
           <div className="lg:w-1/4">
-            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 sticky top-4 border dark:border-gray-700">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
                 <button
                   onClick={resetFilters}
-                  className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
                 >
                   Reset All
                 </button>
               </div>
 
+              {/* University Filter */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  University
+                </label>
+                <UniversitySelector
+                  selectedUniversity={filters.university}
+                  onUniversityChange={(universityId) => handleFilterChange('university', universityId)}
+                />
+              </div>
+
               {/* Search Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Search
                 </label>
                 <input
@@ -125,13 +139,13 @@ const SearchPage = () => {
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
                   placeholder="Hostel name, location..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
 
               {/* Price Range */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Price Range (GH₵)
                 </label>
                 <div className="flex space-x-2">
@@ -140,27 +154,27 @@ const SearchPage = () => {
                     value={filters.minPrice}
                     onChange={(e) => handleFilterChange('minPrice', e.target.value)}
                     placeholder="Min"
-                    className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-1/2 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   <input
                     type="number"
                     value={filters.maxPrice}
                     onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
                     placeholder="Max"
-                    className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-1/2 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
               </div>
 
               {/* Room Type */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Room Type
                 </label>
                 <select
                   value={filters.roomType}
                   onChange={(e) => handleFilterChange('roomType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
                   <option value="">All Types</option>
                   <option value="1 room 1 meter">1 Room 1 Meter</option>
@@ -172,7 +186,7 @@ const SearchPage = () => {
 
               {/* Location */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Location
                 </label>
                 <input
@@ -180,13 +194,13 @@ const SearchPage = () => {
                   value={filters.location}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
                   placeholder="e.g., Cape Coast Central"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
 
               {/* Amenities */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Amenities
                 </label>
                 <div className="space-y-3">
@@ -195,25 +209,25 @@ const SearchPage = () => {
                       type="checkbox"
                       checked={filters.hasKitchen}
                       onChange={(e) => handleFilterChange('hasKitchen', e.target.checked)}
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      className="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 dark:bg-gray-700"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Kitchen Available</span>
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Kitchen Available</span>
                   </label>
                   <label className="flex items-center">
                     <input
                       type="checkbox"
                       checked={filters.hasWifi}
                       onChange={(e) => handleFilterChange('hasWifi', e.target.checked)}
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      className="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 dark:bg-gray-700"
                     />
-                    <span className="ml-2 text-sm text-gray-700">WiFi Available</span>
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">WiFi Available</span>
                   </label>
                 </div>
               </div>
 
               {/* Sort Options */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Sort By
                 </label>
                 <select
@@ -223,7 +237,7 @@ const SearchPage = () => {
                     handleFilterChange('sortBy', sortBy);
                     handleFilterChange('sortOrder', sortOrder);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
                   <option value="name-asc">Name (A-Z)</option>
                   <option value="name-desc">Name (Z-A)</option>
@@ -241,12 +255,12 @@ const SearchPage = () => {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[...Array(9)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-md h-96 animate-pulse">
-                    <div className="h-48 bg-gray-200 rounded-t-lg"></div>
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md h-96 animate-pulse border dark:border-gray-700">
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-t-lg"></div>
                     <div className="p-4 space-y-3">
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
                     </div>
                   </div>
                 ))}
@@ -265,7 +279,7 @@ const SearchPage = () => {
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Previous
                     </button>
@@ -279,8 +293,8 @@ const SearchPage = () => {
                             onClick={() => handlePageChange(page)}
                             className={`px-4 py-2 rounded-md ${
                               currentPage === page
-                                ? 'bg-primary-600 text-white'
-                                : 'text-gray-600 bg-white border border-gray-300 hover:bg-gray-50'
+                                ? 'bg-primary-600 dark:bg-primary-700 text-white'
+                                : 'text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                             }`}
                           >
                             {page}
@@ -293,7 +307,7 @@ const SearchPage = () => {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Next
                     </button>
@@ -302,12 +316,12 @@ const SearchPage = () => {
               </>
             ) : (
               <div className="text-center py-16">
-                <span className="material-icons text-gray-400 text-8xl mb-4">search_off</span>
-                <h3 className="text-2xl font-semibold text-gray-600 mb-2">No hostels found</h3>
-                <p className="text-gray-500 mb-6">Try adjusting your search criteria or filters</p>
+                <span className="material-icons text-gray-400 dark:text-gray-500 text-8xl mb-4">search_off</span>
+                <h3 className="text-2xl font-semibold text-gray-600 dark:text-gray-300 mb-2">No hostels found</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">Try adjusting your search criteria or filters</p>
                 <button
                   onClick={resetFilters}
-                  className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition duration-200"
+                  className="bg-primary-600 dark:bg-primary-700 text-white px-6 py-3 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition duration-200"
                 >
                   Clear All Filters
                 </button>

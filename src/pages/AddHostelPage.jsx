@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import UniversitySelector from '../components/UniversitySelector';
 import api from '../services/api';
 import { Home as HomeIcon, LocationOn as LocationOnIcon, Phone as PhoneIcon, Email as EmailIcon, AttachMoney as AttachMoneyIcon, Wifi as WifiIcon, Kitchen as KitchenIcon, LocalParking as LocalParkingIcon, Security as SecurityIcon, LocalLaundryService as LocalLaundryServiceIcon, Book as BookIcon } from '@mui/icons-material';
 
@@ -11,6 +12,7 @@ const AddHostelPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    university: '',
     location: '',
     distanceFromCampus: '',
     priceRange: {
@@ -164,7 +166,7 @@ const AddHostelPage = () => {
               Add New Hostel
             </h1>
             <p className="mt-1 text-sm text-gray-600">
-              List your hostel to help UCC students find accommodation
+              List your hostel to help students find accommodation at any university in Ghana
             </p>
           </div>
 
@@ -197,6 +199,21 @@ const AddHostelPage = () => {
                 </div>
 
                 <div>
+                  <label htmlFor="university" className="block text-sm font-medium text-gray-700">
+                    University *
+                  </label>
+                  <UniversitySelector
+                    selectedUniversity={formData.university}
+                    onUniversityChange={(universityId) => 
+                      setFormData(prev => ({ ...prev, university: universityId }))
+                    }
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                   <label htmlFor="location" className="block text-sm font-medium text-gray-700">
                     Location *
                   </label>
@@ -213,6 +230,24 @@ const AddHostelPage = () => {
                       placeholder="e.g., Adisadel, Amamoma"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="distanceFromCampus" className="block text-sm font-medium text-gray-700">
+                    Distance from Campus (km) *
+                  </label>
+                  <input
+                    type="number"
+                    id="distanceFromCampus"
+                    name="distanceFromCampus"
+                    required
+                    min="0"
+                    step="0.1"
+                    value={formData.distanceFromCampus}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="e.g., 2.5"
+                  />
                 </div>
               </div>
 

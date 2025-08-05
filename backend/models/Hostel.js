@@ -10,6 +10,11 @@ const hostelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    university: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'University',
+        required: true
+    },
     location: {
         type: String,
         required: true
